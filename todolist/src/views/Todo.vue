@@ -33,6 +33,22 @@ function deleteNote() {
 
 
 
+function addTask() {
+  if (!selectedNote.value) return
+  todoStore.addTask(selectedNote.value.id)
+}
+
+function updateTask(taskId, updates) {
+  if (!selectedNote.value) return
+  todoStore.updateTask(selectedNote.value.id, taskId, updates)
+}
+
+function deleteTask(taskId) {
+  if (!selectedNote.value) return
+  todoStore.deleteTask(selectedNote.value.id, taskId)
+}
+
+
 </script>
 
 <template>
@@ -59,10 +75,39 @@ function deleteNote() {
       </div>
 
       <div class="content-area">
-        <h5>Тут отображается выделенная заметка</h5>
-        <div v-if="selectedNote">
-          <h3>{{ selectedNote.title }}</h3>
+        <div v-if="selectedNote" class="note-editor">
+          <input
+              :value="selectedNote.title"
+              @input="todoStore.updateNoteTitle(selectedNote.id, $event.target.value)"
+              class="form-control form-control-lg mb-3"
+          >
+          <textarea
+              :value="selectedNote.content"
+              @input="todoStore.updateNoteContent(selectedNote.id, $event.target.value)"
+              class="form-control mb-3"
+              rows="3"
+          ></textarea>
 
+          <div class="tasks-section">
+            <button @click="addTask" class="btn btn-sm btn-success mb-3">
+              + Добавить задачу
+            </button>
+
+            <div v-for="task in selectedNote.tasks" :key="task.id" class="task-item">
+              <input
+                  type="checkbox"
+                  :checked="task.completed"
+                  @change="updateTask(task.id, { completed: $event.target.checked })"
+              >
+              <input
+                  type="text"
+                  :value="task.text"
+                  @input="updateTask(task.id, { text: $event.target.value })"
+                  :class="{ 'completed': task.completed }"
+              >
+              <button @click="deleteTask(task.id)">×</button>
+            </div>
+          </div>
         </div>
       </div>
     </div>
