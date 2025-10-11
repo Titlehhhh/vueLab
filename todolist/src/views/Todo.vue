@@ -1,32 +1,38 @@
 <script setup>
 import TodoItem from '@/components/TodoItem.vue'
-import { computed, ref } from 'vue'
+import { useTodoStore } from '@/stores/todo.js'
+import { ref, computed } from 'vue'
 
-const notes = ref([
-  { id: 1, title: 'Первая', content: 'Пример текста' },
-  { id: 2, title: '1Вторая', content: 'Ещё одна заметка' },
-])
+const todoStore = useTodoStore()
 
-const selectedId = ref(null)
-const selectedNote = computed(() =>
-    notes.value.find((n) => n.id === selectedId.value)
-)
+console.log('todoStore:', todoStore)
+console.log('todoStore.notes:', todoStore.notes)
+console.log('Array.isArray:', Array.isArray(todoStore.notes))
 
-function addNote() {
-  const id = Date.now()
-  notes.value.push({ id, title: 'Новая заметка', content: '' })
-  selectedId.value = id
-}
+const selectedId = ref(1)
+const showDeleteModal = ref(false)
+const noteToDelete = ref(null)
+
+const selectedNote = computed(() => todoStore.getNoteById(selectedId.value))
 
 function selectNote(id) {
   selectedId.value = id
 }
 
-function deleteNote(id) {
-  console.log(id)
-  notes.value = notes.value.filter((n) => n.id !== id)
-  if (selectedId.value === id) selectedId.value = null
+function confirmDeleteNote(id) {
+  noteToDelete.value = id
+  showDeleteModal.value = true
 }
+function addNote() {
+  const newNote = todoStore.addNote()
+  selectedId.value = newNote.id
+}
+function deleteNote() {
+
+}
+
+
+
 </script>
 
 <template>
@@ -40,7 +46,7 @@ function deleteNote(id) {
         <div class="notes-list">
           <ul class="list-group">
             <TodoItem
-                v-for="note in notes"
+                v-for="note in todoStore.notes"
                 :key="note.id"
                 :note="note"
                 :isSelected="note.id === selectedId"
@@ -55,7 +61,7 @@ function deleteNote(id) {
         <h5>Тут отображается выделенная заметка</h5>
         <div v-if="selectedNote">
           <h3>{{ selectedNote.title }}</h3>
-          <p>{{ selectedNote.content }}</p>
+
         </div>
       </div>
     </div>
