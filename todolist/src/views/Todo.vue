@@ -46,7 +46,7 @@ function deleteNote() {
         <div class="notes-list">
           <ul class="list-group">
             <TodoItem
-                v-for="note in todoStore.notes"
+                v-for="note in todoStore.notes.value"
                 :key="note.id"
                 :note="note"
                 :isSelected="note.id === selectedId"
