@@ -50,6 +50,7 @@ function deleteNote() {
                 :key="note.id"
                 :note="note"
                 :isSelected="note.id === selectedId"
+                @update:title="todoStore.updateNoteTitle(note.id, $event)"
                 @select="selectNote"
                 @delete="deleteNote"
             />

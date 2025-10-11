@@ -1,17 +1,43 @@
 <script setup>
+import { ref } from 'vue'
+
 const props = defineProps({
   note: Object,
   isSelected: Boolean,
 })
 
-const emit = defineEmits(['select', 'delete'])
+const emit = defineEmits(['select', 'delete', 'update:title'])
+
+const isEditing = ref(false)
+const editTitle = ref('')
 
 function handleSelect() {
-  emit('select', props.note.id)
+  if (!isEditing.value) {
+    emit('select', props.note.id)
+  }
 }
 
 function handleDelete() {
   emit('delete', props.note.id)
+}
+
+function startEdit() {
+  editTitle.value = props.note.title
+  isEditing.value = true
+}
+
+function saveEdit() {
+
+  console.log("Edit:", editTitle.value)
+
+  if (editTitle.value.trim()) {
+    emit('update:title', editTitle.value.trim())
+  }
+  isEditing.value = false
+}
+
+function cancelEdit() {
+  isEditing.value = false
 }
 </script>
 
@@ -21,9 +47,29 @@ function handleDelete() {
       :class="{ active: isSelected }"
       @click="handleSelect"
   >
-    <span>{{ note.title }}</span>
+    <div class="flex-grow-1">
+      <div v-if="isEditing" class="d-flex gap-1">
+        <input
+            v-model="editTitle"
+            @keyup.enter="saveEdit"
+            @keyup.escape="cancelEdit"
+            @blur="saveEdit"
+            class="form-control form-control-sm"
+            v-click-outside="cancelEdit"
+        >
+      </div>
+      <span
+          v-else
+          @dblclick="startEdit"
+          :title="'Двойной клик для редактирования'"
+      >
+        {{ note.title }}
+      </span>
+    </div>
+
     <button
-        class="btn btn-sm btn-danger"
+        v-if="!isEditing"
+        class="btn btn-sm btn-danger ms-2"
         @click.stop="handleDelete"
     >
       ×
@@ -31,10 +77,8 @@ function handleDelete() {
   </li>
 </template>
 
-<script>
-
-</script>
-
 <style scoped>
-
+.list-group-item {
+  cursor: pointer;
+}
 </style>
