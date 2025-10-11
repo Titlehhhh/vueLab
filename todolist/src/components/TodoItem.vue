@@ -47,22 +47,20 @@ function cancelEdit() {
       :class="{ active: isSelected }"
       @click="handleSelect"
   >
-    <div class="flex-grow-1">
+    <div class="flex-grow-1"
+         :title="'Двойной клик для редактирования'"
+         @dblclick="startEdit">
       <div v-if="isEditing" class="d-flex gap-1">
         <input
             v-model="editTitle"
             @keyup.enter="saveEdit"
-            @keyup.escape="cancelEdit"
+            @keyup.esc="cancelEdit"
             @blur="saveEdit"
             class="form-control form-control-sm"
-            v-click-outside="cancelEdit"
         >
       </div>
       <span
-          v-else
-          @dblclick="startEdit"
-          :title="'Двойной клик для редактирования'"
-      >
+          v-else>
         {{ note.title }}
       </span>
     </div>
