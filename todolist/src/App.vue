@@ -3,15 +3,30 @@
 </script>
 
 <template>
-  <h1>Hello App!</h1>
-  <p><strong>Current route path:</strong> {{ $route.fullPath }}</p>
-  <nav>
-    <RouterLink to="/">Go to Home</RouterLink>
-    <RouterLink to="/about">Go to About</RouterLink>
-  </nav>
-  <main>
-    <RouterView />
-  </main>
+  <div class="app-container">
+    <p><strong>Current route path:</strong> {{ $route.fullPath }}</p>
+    <nav>
+      <RouterLink to="/">Go to Home</RouterLink>
+      <RouterLink to="/about">Go to About</RouterLink>
+    </nav>
+    <main class="main-content">
+      <RouterView />
+    </main>
+  </div>
 </template>
 
-<style scoped></style>
+<style scoped>
+.app-container {
+  height: 100vh;
+  display: flex;
+  flex-direction: column;
+  overflow: hidden;
+}
+
+.main-content {
+  flex: 1;
+  min-height: 0;
+  overflow: hidden;
+}
+
+</style>
