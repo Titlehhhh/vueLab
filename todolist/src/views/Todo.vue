@@ -1,36 +1,59 @@
 <script setup>
 import TodoItem from '@/components/TodoItem.vue'
-import { useTodoStore } from '@/stores/todo.js'
-import { ref, computed } from 'vue'
+import ConfirmModal from '@/components/ConfirmModal.vue'
+import {useTodoStore} from '@/stores/todo.js'
+import {computed, ref, watch} from 'vue'
 
 const todoStore = useTodoStore()
 
-console.log('todoStore:', todoStore)
-console.log('todoStore.notes:', todoStore.notes)
-console.log('Array.isArray:', Array.isArray(todoStore.notes))
+//console.log('todoStore:', todoStore)
+//console.log('todoStore.notes:', todoStore.notes)
+//console.log('Array.isArray:', Array.isArray(todoStore.notes))
+
+const emptyCall = () => {
+};
 
 const selectedId = ref(1)
-const showDeleteModal = ref(false)
-const noteToDelete = ref(null)
+
 
 const selectedNote = computed(() => todoStore.getNoteById(selectedId.value))
+
+
+const showModal = ref(false)
+const confirmMessage = ref('')
+let confirmCallback = null
+
+function showDialog(message, func) {
+  confirmMessage.value = message
+  confirmCallback = func
+  showModal.value = true
+}
+
+watch(selectedNote, (newVal, oldVal) => {
+  //console.log('selectedNote change:', {oldVal, newVal})
+})
 
 function selectNote(id) {
   selectedId.value = id
 }
 
-function confirmDeleteNote(id) {
-  noteToDelete.value = id
-  showDeleteModal.value = true
-}
+
 function addNote() {
   const newNote = todoStore.addNote()
   selectedId.value = newNote.id
 }
-function deleteNote() {
 
+function deleteNote(id) {
+
+  showDialog("Удалить заметку?", ()=>{
+    const deleteSelected = id === selectedNote.value.id;
+    todoStore.deleteNote(id)
+    if (deleteSelected) {
+      const fId = todoStore.notes.value.find(() => true)?.id;
+      selectNote(fId)
+    }
+  });
 }
-
 
 
 function addTask() {
@@ -44,14 +67,25 @@ function updateTask(taskId, updates) {
 }
 
 function deleteTask(taskId) {
-  if (!selectedNote.value) return
-  todoStore.deleteTask(selectedNote.value.id, taskId)
+
+  showDialog("Удалить задачу?", ()=>{
+    if (!selectedNote.value) return
+    todoStore.deleteTask(selectedNote.value.id, taskId)
+  })
 }
 
 
 </script>
 
 <template>
+  <ConfirmModal
+      v-model:visible="showModal"
+      :message="confirmMessage"
+      :onConfirm="() => {
+      if (confirmCallback) confirmCallback()
+  }
+"
+  />
   <div class="todo-container">
     <p>Todo</p>
     <div class="todo-layout">
@@ -92,7 +126,6 @@ function deleteTask(taskId) {
             <button @click="addTask" class="btn btn-sm btn-success mb-3">
               + Добавить задачу
             </button>
-
             <div v-for="task in selectedNote.tasks" :key="task.id" class="task-item">
               <input
                   type="checkbox"
@@ -109,9 +142,15 @@ function deleteTask(taskId) {
             </div>
           </div>
         </div>
+
+        <div v-else>
+          <p>Ничего не выбрано</p>
+        </div>
       </div>
     </div>
   </div>
+
+
 </template>
 
 <style scoped>
