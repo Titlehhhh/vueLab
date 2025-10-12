@@ -21,10 +21,16 @@ function cancel() {
 
 <template>
   <div v-if="visible" class="modal-backdrop">
-    <div class="modal-window">
-      <p>{{ message }}</p>
-      <button @click="confirm">Да</button>
-      <button @click="cancel">Отмена</button>
+    <div class="modal-window text-center p-4">
+      <p class="fs-5 mb-4">{{ message }}</p>
+      <div class="d-flex justify-content-center gap-2">
+        <button class="btn btn-success px-4" @click="confirm">
+          <i class="bi bi-check-circle me-1"></i> Да
+        </button>
+        <button class="btn btn-outline-secondary px-4" @click="cancel">
+          <i class="bi bi-x-circle me-1"></i> Отмена
+        </button>
+      </div>
     </div>
   </div>
 </template>

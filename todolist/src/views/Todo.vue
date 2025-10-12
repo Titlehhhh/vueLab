@@ -126,21 +126,37 @@ function deleteTask(taskId) {
             <button @click="addTask" class="btn btn-sm btn-success mb-3">
               + Добавить задачу
             </button>
-            <div v-for="task in selectedNote.tasks" :key="task.id" class="task-item">
+
+            <div
+                v-for="task in selectedNote.tasks"
+                :key="task.id"
+                class="task-item d-flex align-items-center mb-2 gap-2"
+            >
               <input
                   type="checkbox"
+                  class="form-check-input"
                   :checked="task.completed"
                   @change="updateTask(task.id, { completed: $event.target.checked })"
               >
+
               <input
                   type="text"
                   :value="task.text"
                   @input="updateTask(task.id, { text: $event.target.value })"
-                  :class="{ 'completed': task.completed }"
+                  :class="['form-control form-control-sm', { 'text-decoration-line-through text-muted': task.completed }]"
+                  style="flex:1;"
               >
-              <button @click="deleteTask(task.id)">×</button>
+
+              <button
+                  @click="deleteTask(task.id)"
+                  class="btn btn-sm btn-outline-danger"
+                  title="Удалить задачу"
+              >
+                ×
+              </button>
             </div>
           </div>
+
         </div>
 
         <div v-else>
