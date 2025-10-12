@@ -5,9 +5,9 @@
 <template>
   <div class="app-container">
     <p><strong>Current route path:</strong> {{ $route.fullPath }}</p>
-    <nav>
+    <nav class="flex flex-row">
       <RouterLink to="/">Go to Home</RouterLink>
-      <RouterLink to="/about">Go to About</RouterLink>
+      <RouterLink to="/rating">Go to About</RouterLink>
     </nav>
     <main class="main-content">
       <RouterView />
