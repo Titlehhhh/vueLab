@@ -87,7 +87,6 @@ function deleteTask(taskId) {
 "
   />
   <div class="todo-container">
-    <p>Todo</p>
     <div class="todo-layout">
       <div class="sidebar">
         <button class="btn btn-primary w-100" @click="addNote">
